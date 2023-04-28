@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Vita_Vault.Managers;
 
 namespace Vita_Vault.Core
 {
@@ -8,6 +9,7 @@ namespace Vita_Vault.Core
     {
         public static GraphicsDeviceManager Graphics;
         private SpriteBatch _spriteBatch;
+        private GameStateManager gsm;
 
         public Game1()
         {
@@ -21,23 +23,22 @@ namespace Vita_Vault.Core
             Graphics.PreferredBackBufferWidth = Data.ScreenWidth;
             Graphics.PreferredBackBufferHeight = Data.ScreenHeight;
             Graphics.ApplyChanges();
-
+            gsm = new GameStateManager();
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            gsm.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || Data.Exit)
                 Exit();
 
-            // TODO: Add your update logic here
+            gsm.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -46,7 +47,9 @@ namespace Vita_Vault.Core
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+            gsm.Draw(_spriteBatch);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
