@@ -2,23 +2,25 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Vita_Vault
+namespace Vita_Vault.Core
 {
     public class Game1 : Game
     {
-        private GraphicsDeviceManager _graphics;
+        public static GraphicsDeviceManager Graphics;
         private SpriteBatch _spriteBatch;
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            Graphics.PreferredBackBufferWidth = Data.ScreenWidth;
+            Graphics.PreferredBackBufferHeight = Data.ScreenHeight;
+            Graphics.ApplyChanges();
 
             base.Initialize();
         }
