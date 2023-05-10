@@ -60,6 +60,7 @@ internal class MenuScene : Component
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
+        spriteBatch.Begin();
         spriteBatch.Draw(background, new Vector2(0, 0), Color.White);
         spriteBatch.Draw(logo, new Vector2(Data.ScreenWidth / 2 - logo.Width / 2, Data.ScreenHeight / 2 - 350),
             Color.White);
@@ -80,5 +81,6 @@ internal class MenuScene : Component
         }
 
         if (!intersectsAny) previousBtn = -1;
+        spriteBatch.End();
     }
 }

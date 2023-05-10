@@ -15,6 +15,9 @@ internal class Map : Component
     private TiledTileset _tileset;
     private Texture2D _tilesetTexture;
     public HashSet<Rectangle> CollisionArray;
+    public Vector2 MapSize;
+    public Vector2 TileSize;
+    public Matrix Translation { get; set; }
 
     private int _tileWidth;
     private int _tileHeight;
@@ -31,6 +34,8 @@ internal class Map : Component
         _tilesetTilesWide = _tileset.Columns;
         _tilesetTilesHeight = _tileset.TileCount / _tileset.Columns;
         CollisionArray = new ();
+        TileSize = new Vector2(_tileWidth, _tileHeight);
+        MapSize = new Vector2(_map.Width, _map.Height) * TileSize;
     }
 
     internal override void Update(GameTime gameTime)
@@ -54,7 +59,7 @@ internal class Map : Component
             float y = (float)Math.Floor(i / (double)_map.Width) * _map.TileHeight;
 
             Rectangle tilesetRec = new Rectangle(_tileWidth * column, _tileHeight * row, _tileWidth, _tileHeight);
-            Rectangle pos = new Rectangle((int)x, (int)y, _tileWidth, _tileHeight);
+            Rectangle pos = new Rectangle((int)x + (int)Translation.Translation.X, (int)y + (int)Translation.Translation.Y, _tileWidth, _tileHeight);
             CollisionArray.Add(pos);
             spriteBatch.Draw(_tilesetTexture, pos, tilesetRec,
                 Color.White);

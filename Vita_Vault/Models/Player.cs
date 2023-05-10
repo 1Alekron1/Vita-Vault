@@ -10,7 +10,6 @@ internal class Player : Component
 {
     private const float Speed = 500f;
     private Texture2D _texture;
-    private int _outset = 1;
     public Vector2 Position;
     public Vector2 DirectionY;
     public Rectangle Rectangle { get; private set; }
@@ -24,7 +23,7 @@ internal class Player : Component
     {
         _texture = Content.Load<Texture2D>("hero");
         Position = new Vector2(100, 300);
-        _gravity = new Vector2(0, 50);
+        _gravity = new Vector2(0, 30);
         Origin = new(_texture.Width / 2, _texture.Height / 2);
     }
 
@@ -34,21 +33,21 @@ internal class Player : Component
         Position += InputManager.Direction * time * Speed;
         if (InputManager.Jump && !isJumping)
         {
-            Position += new Vector2(0, 20);
+            Position += new Vector2(0, 13);
             isJumping = true;
-            DirectionY = new Vector2(0, -20);
+            DirectionY = new Vector2(0, -13);
         }
 
         if (isJumping)
         {
-            Position += DirectionY;
             DirectionY += _gravity * time;
+            Position += DirectionY;
         }
 
-        _rectangleToDraw = new Rectangle((int)Position.X, (int)Position.Y, _texture.Width / _outset,
-            _texture.Height / _outset);
-        Rectangle = new Rectangle((int)Position.X + _rectangleToDraw.Width / 4, (int)Position.Y,
-            _rectangleToDraw.Width / 3, _texture.Height / _outset);
+        _rectangleToDraw = new Rectangle((int)Position.X - _rectangleToDraw.Width / 3, (int)Position.Y, _texture.Width,
+            _texture.Height);
+        Rectangle = new Rectangle((int)Position.X, (int)Position.Y,
+            _rectangleToDraw.Width / 3, _texture.Height);
     }
 
 
