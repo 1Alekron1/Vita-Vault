@@ -55,11 +55,15 @@ internal class GameScene : Component
                 _player.Position.X = tile.Left - _player.Rectangle.Width;
             if (_player.Rectangle.IsRightOf(tile))
                 _player.Position.X = tile.Right;
+            if (_player.Rectangle.IsOnBottomOf(tile))
+            {
+                _player.DirectionY.Y = 0;
+                _player.Position.Y = tile.Bottom;
+            }
         }
 
         if (!isAny && !_player.isJumping) _player.isJumping = true;
         CalculateTranslation();
-        _map.Translation = _translation / 4;
     }
 
     internal override void Draw(SpriteBatch spriteBatch)

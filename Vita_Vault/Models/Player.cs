@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Vita_Vault.Core;
@@ -41,13 +42,14 @@ internal class Player : Component
         if (isJumping)
         {
             DirectionY += _gravity * time;
+            DirectionY.Y = Math.Min(DirectionY.Y, 15);
             Position += DirectionY;
         }
 
-        _rectangleToDraw = new Rectangle((int)Position.X - _rectangleToDraw.Width / 3, (int)Position.Y, _texture.Width,
+        _rectangleToDraw = new Rectangle((int)Position.X - _rectangleToDraw.Width / 3, (int)Position.Y - _rectangleToDraw.Height / 4, _texture.Width,
             _texture.Height);
         Rectangle = new Rectangle((int)Position.X, (int)Position.Y,
-            _rectangleToDraw.Width / 3, _texture.Height);
+            _rectangleToDraw.Width / 3, 3 * _rectangleToDraw.Height / 4);
     }
 
 
