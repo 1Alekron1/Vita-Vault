@@ -17,7 +17,7 @@ internal class Map : Component
     public HashSet<Rectangle> CollisionArray;
     public Vector2 MapSize;
     public Vector2 TileSize;
-
+    public TiledMap CurrentMap => _map;
     private int _tileWidth;
     private int _tileHeight;
     private int _tilesetTilesWide;

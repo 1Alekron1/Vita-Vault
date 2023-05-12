@@ -45,7 +45,7 @@ namespace Vita_Vault.Core
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
             gsm.Draw(_spriteBatch);
             base.Draw(gameTime);
         }

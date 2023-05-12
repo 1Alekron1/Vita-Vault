@@ -34,41 +34,14 @@ internal class GameScene : Component
 
     internal override void Update(GameTime gameTime)
     {
-        InputManager.Update();
+        InputManager.Update(_player);
+        _player.Map = _map;
         _player.Update(gameTime);
-        var isAny = false;
-        foreach (var tile in _map.CollisionArray)
-        {
-            if (_player.Rectangle.IsOnTopOf(tile))  
-            {
-                if (_player.isJumping && _player.DirectionY.Y >= 0)
-                {
-                    _player.DirectionY = Vector2.Zero;
-                    _player.isJumping = false;
-                    _player.Position.Y = tile.Top - _player.Rectangle.Height;
-                }
-
-                isAny = true;
-            }
-
-            if (_player.Rectangle.IsOnLeftOf(tile))
-                _player.Position.X = tile.Left - _player.Rectangle.Width;
-            if (_player.Rectangle.IsRightOf(tile))
-                _player.Position.X = tile.Right;
-            if (_player.Rectangle.IsOnBottomOf(tile))
-            {
-                _player.DirectionY.Y = 0;
-                _player.Position.Y = tile.Bottom;
-            }
-        }
-
-        if (!isAny && !_player.isJumping) _player.isJumping = true;
-        CalculateTranslation();
     }
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Begin(transformMatrix: _translation);
+        spriteBatch.Begin();
         _map.Draw(spriteBatch);
         _player.Draw(spriteBatch);
         spriteBatch.End();

@@ -1,34 +1,62 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Vita_Vault.Models;
 
 namespace Vita_Vault.Core;
 
-internal static class RectangleHelper
+internal static class CollisionHelper
 {
-    private static int _horizontalOffset = 10;
-    private static int _VerticalOffset = 15;
-
-    public static bool IsOnTopOf(this Rectangle r1, Rectangle r2) 
+    internal static bool CanMoveHere(float x, float y, int width, int height, Map map)
     {
-        return (r1.Bottom >= r2.Top && r1.Top <= r2.Top && (r1.Right >= r2.Left && r1.Left <= r2.Right) &&
-                r1.Bottom - r2.Top <= _VerticalOffset && ((r1.Right - r2.Left >= _horizontalOffset && r1.Right <= r2.Right) ||
-                                                          (r2.Right - r1.Left >= _horizontalOffset && r1.Left >= r2.Left)));
+        if (!IsSolid(x, y, map) && !IsSolid(x + width, y + height, map) && !IsSolid(x + width, y, map) &&
+            !IsSolid(x, y + height, map)) return true;
+        return false;
     }
 
-    public static bool IsOnBottomOf(this Rectangle r1, Rectangle r2)
+    internal static bool IsSolid(float x, float y, Map map)
     {
-        return (r1.Top < r2.Bottom && r1.Bottom > r2.Bottom && (r1.Right >= r2.Left && r1.Left <= r2.Right) &&
-                r2.Bottom - r1.Top <= _VerticalOffset && ((r1.Right - r2.Left >= _horizontalOffset && r1.Right <= r2.Right) ||
-                                                          (r2.Right - r1.Left >= _horizontalOffset && r1.Left >= r2.Left)));
-    }
-    public static bool IsOnLeftOf(this Rectangle r1, Rectangle r2)
-    {
-        return (r1.Right > r2.Left && r1.Left < r2.Left && r1.Bottom > r2.Top && r1.Top < r2.Bottom &&
-                r1.Bottom - r2.Top > _VerticalOffset);
+        if (x < 0 || x >= map.MapSize.X) return true;
+        if (y < 0 || y >= map.MapSize.Y) return true;
+
+        var colomn = Math.Floor(x / map.TileSize.X);
+        var row = Math.Floor(y / map.TileSize.Y);
+        var index = row * map.MapSize.X / map.TileSize.X + colomn;
+        var value = map.CurrentMap.Layers[0].data[(int)index];
+        if (value != 0) return true;
+        return false;
     }
 
-    public static bool IsRightOf(this Rectangle r1, Rectangle r2)
+    public static float GetPosNextToWall(Rectangle hitBox, float xSpeed, Map map)
     {
-        return (r1.Right > r2.Right && r1.Left < r2.Right && r1.Bottom > r2.Top && r1.Top < r2.Bottom &&
-                r1.Bottom - r2.Top > _VerticalOffset);
+        var currentTile = (int)(hitBox.X / map.TileSize.X);
+        if (xSpeed > 0)
+        {
+            var tileXPos = currentTile * map.TileSize.X;
+            var xOffset = (int)(map.TileSize.X - hitBox.Width);
+            return tileXPos + xOffset - 1;
+        }
+
+        return currentTile * map.TileSize.X;
+    }
+
+    public static float GetPosNextToRoofOrFloor(Rectangle hitBox, float airSpeed, Map map)
+    {
+        var currentTile = (int)(hitBox.Y / map.TileSize.Y);
+        if (airSpeed > 0)
+        {
+            var tileYPos = (currentTile + 1) * map.TileSize.Y;
+            var yOffset = (int)(map.TileSize.Y - hitBox.Height);
+            return tileYPos + yOffset - 1;
+        }
+
+        return (currentTile) * map.TileSize.Y;
+    }
+
+    public static bool OnFloor(Rectangle hitBox, Map map)
+    {
+        if (!IsSolid(hitBox.X, hitBox.Y + hitBox.Height + 1, map) &&
+            !IsSolid(hitBox.X + hitBox.Width, hitBox.Y + hitBox.Height + 1, map)) return false;
+        return true;
     }
 }
