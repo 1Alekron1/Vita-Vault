@@ -21,7 +21,7 @@ internal class Map : Component
     private int _tileWidth;
     private int _tileHeight;
     private int _tilesetTilesWide;
-    private int _tilesetTilesHeight;
+    public Vector2 LvlOffset;
 
     internal override void LoadContent(ContentManager Content)
     {
@@ -31,7 +31,6 @@ internal class Map : Component
         _tileWidth = _tileset.TileWidth;
         _tileHeight = _tileset.TileHeight;
         _tilesetTilesWide = _tileset.Columns;
-        _tilesetTilesHeight = _tileset.TileCount / _tileset.Columns;
         CollisionArray = new ();
         TileSize = new Vector2(_tileWidth, _tileHeight);
         MapSize = new Vector2(_map.Width, _map.Height) * TileSize;
@@ -52,13 +51,13 @@ internal class Map : Component
             int tileFrame = gid - 1;
 
             int column = tileFrame % _tilesetTilesWide;
-            int row = (int)Math.Floor((double)tileFrame / (double)_tilesetTilesWide);
+            int row = (int)Math.Floor(tileFrame / (double)_tilesetTilesWide);
 
             float x = (i % _map.Width) * _map.TileWidth;
             float y = (float)Math.Floor(i / (double)_map.Width) * _map.TileHeight;
 
             Rectangle tilesetRec = new Rectangle(_tileWidth * column, _tileHeight * row, _tileWidth, _tileHeight);
-            Rectangle pos = new Rectangle((int)x, (int)y, _tileWidth, _tileHeight);
+            Rectangle pos = new Rectangle((int)(x - LvlOffset.X), (int)(y - LvlOffset.Y), _tileWidth, _tileHeight);
             CollisionArray.Add(pos);
             spriteBatch.Draw(_tilesetTexture, pos, tilesetRec,
                 Color.White);

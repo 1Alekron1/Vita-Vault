@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Vita_Vault.Core;
-using Vita_Vault.Managers;
 
 namespace Vita_Vault.Models;
 
@@ -21,6 +18,7 @@ internal class Player : Component
     public bool left, right, jump;
     public Rectangle HitBox { get; private set; }
     private Rectangle _rectangleToDraw;
+    public Vector2 LvlOffset;
 
     // Jumping / Gravity
     private float airSpeed;
@@ -34,13 +32,14 @@ internal class Player : Component
     internal override void LoadContent(ContentManager Content)
     {
         _texture = Content.Load<Texture2D>("player");
-        Position = new Vector2(100, 300);
+        Position = new Vector2(500, 500);
+        UpdateHitBox();
         _hitBoxWidth = 55;
         _hitBoxHeight = 70;
         _xOffset = 52;
         _yOffset = 9;
-        _gravity = 30;
-        _jumpSpeed = -12;
+        _gravity = 35;
+        _jumpSpeed = -15;
         _fallSpeedAfterCollision = 225;
     }
 
@@ -52,7 +51,7 @@ internal class Player : Component
 
     private void UpdateHitBox()
     {
-        _rectangleToDraw = new Rectangle((int)Position.X - _xOffset, (int)Position.Y - _yOffset, _texture.Width,
+        _rectangleToDraw = new Rectangle((int)(Position.X - _xOffset - LvlOffset.X), (int)(Position.Y - _yOffset - LvlOffset.Y), _texture.Width,
             _texture.Height);
         HitBox = new Rectangle((int)Position.X, (int)Position.Y,
             _hitBoxWidth, _hitBoxHeight);
