@@ -12,6 +12,7 @@ internal class GameScene : Component
     private Map _map;
     private Player _player;
     private Texture2D _background;
+    private Texture2D _bigClouds;
 
     private float _xLvlOffset;
     private float _yLvlOffset;
@@ -33,6 +34,7 @@ internal class GameScene : Component
         _player = new Player();
         _player.LoadContent(Content);
         _background = Content.Load<Texture2D>("gamebg");
+        _bigClouds = Content.Load<Texture2D>("clouds");
         _leftBorder = (int)(0.2 * Data.ScreenWidth);
         _rightBorder = (int)(0.8 * Data.ScreenWidth);
         _bottomBorder = (int)(0.6 * Data.ScreenHeight);
@@ -74,10 +76,20 @@ internal class GameScene : Component
     {
         spriteBatch.Begin();
         spriteBatch.Draw(_background, new Vector2(0, 0), Color.White);
+        DrawClouds(spriteBatch);
         _map.LvlOffset = new Vector2(_xLvlOffset, _yLvlOffset);
         _player.LvlOffset = new Vector2(_xLvlOffset, _yLvlOffset);
         _map.Draw(spriteBatch);
         _player.Draw(spriteBatch);
         spriteBatch.End();
+    }
+
+    private void DrawClouds(SpriteBatch spriteBatch)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            spriteBatch.Draw(_bigClouds, new Vector2(i * _bigClouds.Width - (int)(_xLvlOffset * 0.3), 380), Color.White);
+        }
+        
     }
 }
