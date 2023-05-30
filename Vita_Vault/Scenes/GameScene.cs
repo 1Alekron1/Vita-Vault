@@ -11,6 +11,7 @@ internal class GameScene : Component
 {
     private Map _map;
     private Player _player;
+    private Shooting _shooting;
     private Texture2D _background;
     private Texture2D _bigClouds;
 
@@ -33,6 +34,8 @@ internal class GameScene : Component
         _map.LoadContent(Content);
         _player = new Player();
         _player.LoadContent(Content);
+        _shooting = new Shooting();
+        _shooting.LoadContent(Content);
         _background = Content.Load<Texture2D>("gamebg");
         _bigClouds = Content.Load<Texture2D>("clouds");
         _leftBorder = (int)(0.2 * Data.ScreenWidth);
@@ -49,9 +52,13 @@ internal class GameScene : Component
 
     internal override void Update(GameTime gameTime)
     {
-        InputManager.Update(_player);
-        _player.Map = _map;
+        InputManager.Update(_player, _shooting);
+        _player.SetMap(_map);
+        _shooting.SetMap(_map);
+        _shooting.SetPosition(_player.Position);
         _player.Update(gameTime);
+        _map.UpdateLoading(_player);
+        _shooting.Update(gameTime);
         CheckCloseToBorder();
     }
 
@@ -79,17 +86,19 @@ internal class GameScene : Component
         DrawClouds(spriteBatch);
         _map.LvlOffset = new Vector2(_xLvlOffset, _yLvlOffset);
         _player.LvlOffset = new Vector2(_xLvlOffset, _yLvlOffset);
+        _shooting.LvlOffset = new Vector2(_xLvlOffset, _yLvlOffset);
         _map.Draw(spriteBatch);
         _player.Draw(spriteBatch);
+        _shooting.Draw(spriteBatch);
         spriteBatch.End();
     }
 
     private void DrawClouds(SpriteBatch spriteBatch)
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
-            spriteBatch.Draw(_bigClouds, new Vector2(i * _bigClouds.Width - (int)(_xLvlOffset * 0.3), 380), Color.White);
+            spriteBatch.Draw(_bigClouds, new Vector2(i * _bigClouds.Width - (int)(_xLvlOffset * 0.3), 380),
+                Color.White);
         }
-        
     }
 }

@@ -26,7 +26,7 @@ internal class Player : Component
     private float _jumpSpeed;
     private float _fallSpeedAfterCollision;
     public bool inAir = true;
-    public Map Map { get; set; }
+    private Map _map;
 
 
     internal override void LoadContent(ContentManager Content)
@@ -35,9 +35,9 @@ internal class Player : Component
         Position = new Vector2(500, 500);
         UpdateHitBox();
         _hitBoxWidth = 55;
-        _hitBoxHeight = 70;
+        _hitBoxHeight = 63;
         _xOffset = 52;
-        _yOffset = 9;
+        _yOffset = 16;
         _gravity = 35;
         _jumpSpeed = -15;
         _fallSpeedAfterCollision = 225;
@@ -72,18 +72,18 @@ internal class Player : Component
         if (right)
             xSpeed += shiftX;
 
-        if (!inAir && !CollisionHelper.OnFloor(HitBox, Map)) inAir = true;
+        if (!inAir && !CollisionHelper.OnFloor(HitBox, _map)) inAir = true;
 
         if (inAir)
         {
-            if (CollisionHelper.CanMoveHere(HitBox.X, HitBox.Y + airSpeed, HitBox.Width, HitBox.Height, Map))
+            if (CollisionHelper.CanMoveHere(HitBox.X, HitBox.Y + airSpeed, HitBox.Width, HitBox.Height, _map))
             {
                 Position.Y += airSpeed;
                 airSpeed += shiftY;
             }
             else
             {
-                Position.Y = CollisionHelper.GetPosNextToRoofOrFloor(HitBox, airSpeed, Map);
+                Position.Y = CollisionHelper.GetPosNextToRoofOrFloor(HitBox, airSpeed, _map);
                 if (airSpeed > 0) ResetInAir();
                 else airSpeed = 0;
             }
@@ -107,11 +107,11 @@ internal class Player : Component
 
     private void UpdateXPos(float xSpeed)
     {
-        if (CollisionHelper.CanMoveHere(Position.X + xSpeed, Position.Y, HitBox.Width, HitBox.Height, Map))
+        if (CollisionHelper.CanMoveHere(Position.X + xSpeed, Position.Y, HitBox.Width, HitBox.Height, _map))
             Position.X += xSpeed;
         else
         {
-            Position.X = CollisionHelper.GetPosNextToWall(HitBox, xSpeed, Map);
+            Position.X = CollisionHelper.GetPosNextToWall(HitBox, xSpeed, _map);
         }
     }
 
@@ -119,5 +119,10 @@ internal class Player : Component
     internal override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(_texture, _rectangleToDraw, Color.White);
+    }
+
+    public void SetMap(Map map)
+    {
+        _map = map;
     }
 }

@@ -14,7 +14,7 @@ internal class Map : Component
     private TiledMap _map;
     private TiledTileset _tileset;
     private Texture2D _tilesetTexture;
-    public HashSet<Rectangle> CollisionArray;
+    
     public Vector2 MapSize;
     public Vector2 TileSize;
     public TiledMap CurrentMap => _map;
@@ -22,6 +22,8 @@ internal class Map : Component
     private int _tileHeight;
     private int _tilesetTilesWide;
     public Vector2 LvlOffset;
+    private int upOffset;
+    private int downOffset;
 
     internal override void LoadContent(ContentManager Content)
     {
@@ -31,7 +33,6 @@ internal class Map : Component
         _tileWidth = _tileset.TileWidth;
         _tileHeight = _tileset.TileHeight;
         _tilesetTilesWide = _tileset.Columns;
-        CollisionArray = new ();
         TileSize = new Vector2(_tileWidth, _tileHeight);
         MapSize = new Vector2(_map.Width, _map.Height) * TileSize;
     }
@@ -43,8 +44,7 @@ internal class Map : Component
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
-        CollisionArray.Clear();
-        for (var i = 0; i < _map.Layers[0].data.Length; i++)
+        for (var i = upOffset; i < downOffset; i++)
         {
             int gid = _map.Layers[0].data[i];
             if (gid == 0) continue;
@@ -58,9 +58,17 @@ internal class Map : Component
 
             Rectangle tilesetRec = new Rectangle(_tileWidth * column, _tileHeight * row, _tileWidth, _tileHeight);
             Rectangle pos = new Rectangle((int)(x - LvlOffset.X), (int)(y - LvlOffset.Y), _tileWidth, _tileHeight);
-            CollisionArray.Add(pos);
             spriteBatch.Draw(_tilesetTexture, pos, tilesetRec,
                 Color.White);
         }
+    }
+
+    public void UpdateLoading(Player player)
+    {
+        var colomn = Math.Floor(player.Position.X / TileSize.X);
+        var row = Math.Floor(player.Position.Y / TileSize.Y);
+        var index = row * MapSize.X / TileSize.X + colomn;
+        upOffset = (int)Math.Max(0, index - 1440);
+        downOffset = (int)Math.Min(14400, index + 1500);
     }
 }

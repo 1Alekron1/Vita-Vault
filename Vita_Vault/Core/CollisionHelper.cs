@@ -42,15 +42,15 @@ internal static class CollisionHelper
 
     public static float GetPosNextToRoofOrFloor(Rectangle hitBox, float airSpeed, Map map)
     {
-        var currentTile = (int)(hitBox.Y / map.TileSize.Y);
+        var currentTile = (int)((hitBox.Y + hitBox.Height) / map.TileSize.Y);
         if (airSpeed > 0)
         {
-            var tileYPos = (currentTile + 1) * map.TileSize.Y;
+            var tileYPos = (currentTile) * map.TileSize.Y;
             var yOffset = (int)(map.TileSize.Y - hitBox.Height);
             return tileYPos + yOffset - 1;
         }
 
-        return (currentTile) * map.TileSize.Y;
+        return (int)(hitBox.Y / map.TileSize.Y) * map.TileSize.Y;
     }
 
     public static bool OnFloor(Rectangle hitBox, Map map)
