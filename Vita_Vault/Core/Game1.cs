@@ -30,6 +30,7 @@ namespace Vita_Vault.Core
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            gsm.graphicsDevice = GraphicsDevice;
             gsm.LoadContent(Content);
         }
 

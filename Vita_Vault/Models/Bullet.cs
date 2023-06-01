@@ -10,14 +10,15 @@ internal class Bullet : Component
 {
     private Texture2D _texture;
     private Vector2 _offset;
-    private Vector2 _position;
+    public Vector2 _position { get; private set; }
     private Vector2 _speed;
     private float _speedScale;
     public Vector2 LvlOffset;
     private Map _map;
     private Vector2 _currentPostion;
     private Vector2 _loadingBoundaries;
-    
+    public GraphicsDevice _graphicsDevice;
+
     public bool IsDestroyed { get; private set; }
 
     internal Bullet(Vector2 position, Vector2 destination, Vector2 lvlOffset)
@@ -25,7 +26,7 @@ internal class Bullet : Component
         LvlOffset = lvlOffset;
         _position = position;
         _position += _offset;
-        _speedScale = 500;
+        _speedScale = 1000;
         _speed = destination - position + LvlOffset;
         _speed.Normalize();
         _speed *= _speedScale;
@@ -47,8 +48,8 @@ internal class Bullet : Component
             IsDestroyed = true;
             //TODO Explosion
         }
+
         _position += shift;
-        
     }
 
     private bool IsInLoadingBoundaries()
@@ -62,12 +63,12 @@ internal class Bullet : Component
     {
         spriteBatch.Draw(_texture, _position - LvlOffset, Color.White);
     }
-    
+
     public void SetMap(Map map)
     {
         _map = map;
     }
-    
+
     public void SetPosition(Vector2 position)
     {
         _currentPostion = position;

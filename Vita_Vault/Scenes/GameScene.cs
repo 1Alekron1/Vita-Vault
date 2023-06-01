@@ -14,6 +14,7 @@ internal class GameScene : Component
     private Shooting _shooting;
     private Texture2D _background;
     private Texture2D _bigClouds;
+    public GraphicsDevice _graphicsDevice;
 
     private float _xLvlOffset;
     private float _yLvlOffset;
@@ -35,6 +36,7 @@ internal class GameScene : Component
         _player = new Player();
         _player.LoadContent(Content);
         _shooting = new Shooting();
+        _shooting._graphicsDevice = _graphicsDevice;
         _shooting.LoadContent(Content);
         _background = Content.Load<Texture2D>("gamebg");
         _bigClouds = Content.Load<Texture2D>("clouds");

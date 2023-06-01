@@ -10,9 +10,11 @@ internal partial class GameStateManager : Component
 {
     private MenuScene ms = new MenuScene();
     private GameScene gs = new GameScene();
+    public GraphicsDevice graphicsDevice;
     internal override void LoadContent(ContentManager Content)
     {
         ms.LoadContent(Content);
+        gs._graphicsDevice = graphicsDevice;
         gs.LoadContent(Content);
     }
 

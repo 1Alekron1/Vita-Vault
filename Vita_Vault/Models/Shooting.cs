@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,15 +11,18 @@ namespace Vita_Vault.Models;
 internal class Shooting : Component
 {
     private List<Bullet> activeBullets;
+    private List<Explosion> activeExplosions;
     private bool _isIdle;
-    private ContentManager _content; 
+    private ContentManager _content;
     public Vector2 LvlOffset;
     private Map _map;
     private Vector2 _currentPostion;
-    
+    public GraphicsDevice _graphicsDevice;
+
     internal override void LoadContent(ContentManager Content)
     {
         activeBullets = new();
+        activeExplosions = new();
         _content = Content;
     }
 
@@ -27,7 +31,11 @@ internal class Shooting : Component
         var destroyed = new List<Bullet>();
         foreach (var bullet in activeBullets)
         {
-            if (bullet.IsDestroyed) destroyed.Add(bullet);
+            if (bullet.IsDestroyed)
+            {
+                destroyed.Add(bullet);
+                Explode(bullet);
+            }
             else
             {
                 bullet.LvlOffset = LvlOffset;
@@ -36,10 +44,27 @@ internal class Shooting : Component
             }
         }
 
+        foreach (var explosion in activeExplosions)
+        {
+            explosion.LvlOffset = LvlOffset;
+            explosion.Update(gameTime);
+        }
+        
         foreach (var bullet in destroyed)
         {
             activeBullets.Remove(bullet);
         }
+        
+    }
+
+    private void Explode(Bullet bullet)
+    {
+        var explosion = new Explosion();
+        explosion._graphicsDevice = _graphicsDevice;
+        explosion.LvlOffset = LvlOffset;
+        explosion.SetPosition(bullet._position);
+        explosion.LoadContent(_content);
+        activeExplosions.Add(explosion);
     }
 
     internal override void Draw(SpriteBatch spriteBatch)
@@ -47,6 +72,11 @@ internal class Shooting : Component
         foreach (var bullet in activeBullets)
         {
             bullet.Draw(spriteBatch);
+        }
+
+        foreach (var explosion in activeExplosions)
+        {
+            explosion.Draw(spriteBatch);
         }
     }
 
@@ -66,12 +96,12 @@ internal class Shooting : Component
     {
         _isIdle = true;
     }
-    
+
     public void SetMap(Map map)
     {
         _map = map;
     }
-    
+
     public void SetPosition(Vector2 position)
     {
         _currentPostion = position;
