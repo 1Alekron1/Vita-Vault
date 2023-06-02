@@ -8,14 +8,15 @@ namespace Vita_Vault.Managers;
 
 internal partial class GameStateManager : Component
 {
-    private MenuScene ms = new MenuScene();
-    private GameScene gs = new GameScene();
-    public GraphicsDevice graphicsDevice;
+    private MenuScene ms = new();
+    private GameScene gs = new();
+    private PauseScene ps = new();
+    
     internal override void LoadContent(ContentManager Content)
     {
         ms.LoadContent(Content);
-        gs._graphicsDevice = graphicsDevice;
         gs.LoadContent(Content);
+        ps.LoadContent(Content);
     }
 
     internal override void Update(GameTime gameTime)
@@ -28,10 +29,11 @@ internal partial class GameStateManager : Component
             case Data.Scenes.Game:
                 gs.Update(gameTime);
                 break;
-            case Data.Scenes.Settings:
+            case Data.Scenes.Pause:
+                ps.Update(gameTime);
                 break;
         }
-    }
+     }
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
@@ -43,7 +45,9 @@ internal partial class GameStateManager : Component
             case Data.Scenes.Game:
                 gs.Draw(spriteBatch);
                 break;
-            case Data.Scenes.Settings:
+            case Data.Scenes.Pause:
+                gs.Draw(spriteBatch);
+                ps.Draw(spriteBatch);
                 break;
         }
     }

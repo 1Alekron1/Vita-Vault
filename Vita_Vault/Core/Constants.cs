@@ -7,4 +7,5 @@ internal class Constants
 {
     public static Texture2D[] noiseFrames;
     public static ContentManager Content { get; set; }
+    public static GraphicsDevice GraphicsDevice { get; set; }
 }

@@ -9,7 +9,7 @@ using Vita_Vault.Core;
 
 namespace Vita_Vault.Scenes;
 
-internal class MenuScene : Component
+internal class MenuScene : ButtonScene
 {
     private int maxBtns;
     private Texture2D background;

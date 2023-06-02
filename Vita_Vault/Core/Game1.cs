@@ -20,24 +20,24 @@ namespace Vita_Vault.Core
 
         protected override void Initialize()
         {
+            Constants.Content = Content;
+            Constants.GraphicsDevice = GraphicsDevice;
             Graphics.PreferredBackBufferWidth = Data.ScreenWidth;
             Graphics.PreferredBackBufferHeight = Data.ScreenHeight;
             Graphics.ApplyChanges();
             gsm = new GameStateManager();
             base.Initialize();
-            Constants.Content = Content;
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            gsm.graphicsDevice = GraphicsDevice;
             gsm.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || Data.Exit)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Data.Exit)
                 Exit();
 
             gsm.Update(gameTime);
@@ -47,7 +47,6 @@ namespace Vita_Vault.Core
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.White);
             gsm.Draw(_spriteBatch);
             base.Draw(gameTime);
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Vita_Vault.Core;
@@ -14,7 +15,6 @@ internal class GameScene : Component
     private Shooting _shooting;
     private Texture2D _background;
     private Texture2D _bigClouds;
-    public GraphicsDevice _graphicsDevice;
 
     private float _xLvlOffset;
     private float _yLvlOffset;
@@ -59,7 +59,7 @@ internal class GameScene : Component
         {
             var temp = PerlinNoiseGenerator.GeneratePerlinNoise(PerlinNoiseGenerator.GenerateWhiteNoise(i * 10, i * 10),
                 5);
-            noise[i - 5] = PerlinNoiseGenerator.CreateTexture(_graphicsDevice,
+            noise[i - 5] = PerlinNoiseGenerator.CreateTexture(Constants.GraphicsDevice,
                 PerlinNoiseGenerator.MapGradient(Color.Orange, Color.DarkRed, temp), i - 5);
         }
         Constants.noiseFrames = noise;
@@ -96,6 +96,7 @@ internal class GameScene : Component
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
+        Constants.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin();
         spriteBatch.Draw(_background, new Vector2(0, 0), Color.White);
         DrawClouds(spriteBatch);

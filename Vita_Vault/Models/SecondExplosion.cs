@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Vita_Vault.Core;
 
 namespace Vita_Vault.Models;
@@ -44,7 +42,7 @@ internal class SecondExplosion : Component
     
     internal override void LoadContent(ContentManager Content)
     {
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 200; i++)
         {
             Emit(_position);
         }

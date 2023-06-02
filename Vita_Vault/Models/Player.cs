@@ -9,6 +9,7 @@ internal class Player : Component
 {
     private const float Speed = 500f;
     private Texture2D _texture;
+    private Texture2D _textureFlipped;
     public Vector2 Position;
     public Vector2 DirectionY;
     private int _hitBoxWidth;
@@ -27,11 +28,13 @@ internal class Player : Component
     private float _fallSpeedAfterCollision;
     public bool inAir = true;
     private Map _map;
+    private Texture2D _currentSprite;
 
 
     internal override void LoadContent(ContentManager Content)
     {
         _texture = Content.Load<Texture2D>("player");
+        _textureFlipped = Content.Load<Texture2D>("playerFliped");
         Position = new Vector2(500, 500);
         UpdateHitBox();
         _hitBoxWidth = 55;
@@ -41,6 +44,7 @@ internal class Player : Component
         _gravity = 35;
         _jumpSpeed = -15;
         _fallSpeedAfterCollision = 225;
+        _currentSprite = _texture;
     }
 
     internal override void Update(GameTime gameTime)
@@ -68,9 +72,16 @@ internal class Player : Component
 
         float xSpeed = 0;
         if (left)
+        {
             xSpeed -= shiftX;
+            _currentSprite = _textureFlipped;
+        }
+
         if (right)
+        {
             xSpeed += shiftX;
+            _currentSprite = _texture;
+        }
 
         if (!inAir && !CollisionHelper.OnFloor(HitBox, _map)) inAir = true;
 
@@ -118,7 +129,7 @@ internal class Player : Component
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_texture, _rectangleToDraw, Color.White);
+        spriteBatch.Draw(_currentSprite, _rectangleToDraw, Color.White);
     }
 
     public void SetMap(Map map)
