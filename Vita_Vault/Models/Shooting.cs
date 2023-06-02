@@ -12,7 +12,7 @@ internal class Shooting : Component
 {
     private List<Bullet> activeBullets;
     private List<Explosion> activeExplosions;
-    private bool _isIdle;
+    public bool _isIdle;
     private ContentManager _content;
     public Vector2 LvlOffset;
     private Map _map;

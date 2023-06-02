@@ -12,6 +12,7 @@ namespace Vita_Vault.Scenes;
 internal class PauseScene : Component
 {
     private Texture2D _solid;
+    private Texture2D _solid1;
     private Texture2D[] btns;
     private Rectangle[] btnsRect;
     private MouseState ms;
@@ -23,6 +24,7 @@ internal class PauseScene : Component
     internal override void LoadContent(ContentManager Content)
     {
         _solid = Content.Load<Texture2D>("solid");
+        _solid1 = Content.Load<Texture2D>("solid1");
         tick =  Content.Load<SoundEffect>("tick");
         const int incrementValue = 80;
         btns = new Texture2D[maxBtns];
@@ -53,6 +55,7 @@ internal class PauseScene : Component
     {
         spriteBatch.Begin();
         spriteBatch.Draw(_solid, new Vector2(0, 0), Color.White * 0.5f);
+        spriteBatch.Draw(_solid1, new Rectangle(Data.ScreenWidth / 2 - 250, Data.ScreenHeight / 2 - 300, 500, 600), Color.Black);
         var intersectsAny = false;
         for (int i = 0; i < maxBtns; i++)
         {

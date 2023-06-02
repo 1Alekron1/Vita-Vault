@@ -13,18 +13,23 @@ internal class InputManager
             player.right = false;
             player.left = false;
             player.jump = false;
-            if (keyboardState.IsKeyUp(Keys.Escape)) Data.EscPressed = false;
+            if (keyboardState.IsKeyUp(Keys.Escape))
+            {
+                  Data.EscPressed = false;
+            }
             if (keyboardState.IsKeyDown(Keys.Escape) && !Data.EscPressed)
             {
                   Data.CurrentState = Data.Scenes.Pause;
                   Data.EscPressed = true;
+                  shooting._isIdle = false;
+                  return;
             }
             if (keyboardState.IsKeyDown(Keys.D)) player.right = true;
             if (keyboardState.IsKeyDown(Keys.A)) player.left = true;
             if (keyboardState.IsKeyDown(Keys.W)) player.jump = true;
             if (mouseState.LeftButton == ButtonState.Pressed)
                   shooting.Shoot(player.Position, mouseState.Position.ToVector2());
-            if (mouseState.LeftButton == ButtonState.Released) shooting.Stop();
+            else if (mouseState.LeftButton == ButtonState.Released) shooting.Stop();
       }
 
       internal static void Update()
