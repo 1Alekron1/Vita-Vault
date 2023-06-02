@@ -9,13 +9,12 @@ namespace Vita_Vault.Models;
 internal class Bullet : Component
 {
     private Texture2D _texture;
-    private Vector2 _offset;
-    public Vector2 _position { get; private set; }
-    private Vector2 _speed;
-    private float _speedScale;
+    public Vector2 Position { get; private set; }
+    private readonly Vector2 _speed;
+    private readonly float _speedScale;
     public Vector2 LvlOffset;
     private Map _map;
-    private Vector2 _currentPostion;
+    private Vector2 _currentPosition;
     private Vector2 _loadingBoundaries;
     public GraphicsDevice _graphicsDevice;
 
@@ -24,44 +23,42 @@ internal class Bullet : Component
     internal Bullet(Vector2 position, Vector2 destination, Vector2 lvlOffset)
     {
         LvlOffset = lvlOffset;
-        _position = position;
-        _position += _offset;
+        Position = position;
         _speedScale = 1000;
         _speed = destination - position + LvlOffset;
         _speed.Normalize();
         _speed *= _speedScale;
     }
 
-    internal override void LoadContent(ContentManager Content)
+    internal override void LoadContent(ContentManager content)
     {
         _loadingBoundaries = new Vector2(1600, 1000);
-        _texture = Content.Load<Texture2D>("1");
+        _texture = content.Load<Texture2D>("1");
     }
 
     internal override void Update(GameTime gameTime)
     {
         var time = (float)gameTime.ElapsedGameTime.TotalSeconds;
         var shift = time * _speed;
-        if (!CollisionHelper.CanMoveHere(_position.X + shift.X, _position.Y + shift.Y, _texture.Width, _texture.Height,
+        if (!CollisionHelper.CanMoveHere(Position.X + shift.X, Position.Y + shift.Y, _texture.Width, _texture.Height,
                 _map) || !IsInLoadingBoundaries())
         {
             IsDestroyed = true;
-            //TODO Explosion
         }
 
-        _position += shift;
+        Position += shift;
     }
 
     private bool IsInLoadingBoundaries()
     {
-        var diff = _currentPostion - _position;
+        var diff = _currentPosition - Position;
         if (Math.Abs(diff.X) > _loadingBoundaries.X || Math.Abs(diff.Y) > _loadingBoundaries.Y) return false;
         return true;
     }
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_texture, _position - LvlOffset, Color.White);
+        spriteBatch.Draw(_texture, Position - LvlOffset, Color.White);
     }
 
     public void SetMap(Map map)
@@ -71,6 +68,6 @@ internal class Bullet : Component
 
     public void SetPosition(Vector2 position)
     {
-        _currentPostion = position;
+        _currentPosition = position;
     }
 }

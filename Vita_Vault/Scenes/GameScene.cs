@@ -31,12 +31,12 @@ internal class GameScene : Component
 
     internal override void LoadContent(ContentManager Content)
     {
+        GenerateNoise();
         _map = new Map();
         _map.LoadContent(Content);
         _player = new Player();
         _player.LoadContent(Content);
         _shooting = new Shooting();
-        _shooting._graphicsDevice = _graphicsDevice;
         _shooting.LoadContent(Content);
         _background = Content.Load<Texture2D>("gamebg");
         _bigClouds = Content.Load<Texture2D>("clouds");
@@ -50,6 +50,19 @@ internal class GameScene : Component
         _maxTilesOffsetY = _lvlTilesHigh - Data.ScreenHeight / _map.TileSize.Y;
         _maxLvlOffsetX = _maxTilesOffsetX * _map.TileSize.X;
         _maxLvlOffsetY = _maxTilesOffsetY * _map.TileSize.Y;
+    }
+
+    private void GenerateNoise()
+    {
+        var noise = new Texture2D[20];
+        for (int i = 5; i < 25; i++)
+        {
+            var temp = PerlinNoiseGenerator.GeneratePerlinNoise(PerlinNoiseGenerator.GenerateWhiteNoise(i * 10, i * 10),
+                5);
+            noise[i - 5] = PerlinNoiseGenerator.CreateTexture(_graphicsDevice,
+                PerlinNoiseGenerator.MapGradient(Color.Orange, Color.DarkRed, temp), i - 5);
+        }
+        Constants.noiseFrames = noise;
     }
 
     internal override void Update(GameTime gameTime)

@@ -27,8 +27,11 @@ internal class Map : Component
 
     internal override void LoadContent(ContentManager Content)
     {
-        _map = new TiledMap("C:\\Users\\644\\OneDrive\\Рабочий стол\\Vita_Vault\\Vita_Vault\\Content\\Map.tmx");
-        _tileset = new TiledTileset("C:\\Users\\644\\OneDrive\\Рабочий стол\\Vita_Vault\\Vita_Vault\\Content\\mapTileset.tsx");
+        var path = Directory.GetCurrentDirectory();
+        for (int i = 0; i < 3; i++)
+            path = Path.GetDirectoryName(path);
+        _map = new TiledMap(Path.Combine(path, "Content\\Map.tmx"));
+        _tileset = new TiledTileset(Path.Combine(path, "Content\\mapTileset.tsx"));
         _tilesetTexture = Content.Load<Texture2D>("Terrain");
         _tileWidth = _tileset.TileWidth;
         _tileHeight = _tileset.TileHeight;

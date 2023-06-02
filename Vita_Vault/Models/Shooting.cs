@@ -17,7 +17,6 @@ internal class Shooting : Component
     public Vector2 LvlOffset;
     private Map _map;
     private Vector2 _currentPostion;
-    public GraphicsDevice _graphicsDevice;
 
     internal override void LoadContent(ContentManager Content)
     {
@@ -60,9 +59,8 @@ internal class Shooting : Component
     private void Explode(Bullet bullet)
     {
         var explosion = new Explosion();
-        explosion._graphicsDevice = _graphicsDevice;
         explosion.LvlOffset = LvlOffset;
-        explosion.SetPosition(bullet._position);
+        explosion.SetPosition(bullet.Position);
         explosion.LoadContent(_content);
         activeExplosions.Add(explosion);
     }

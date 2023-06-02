@@ -25,6 +25,7 @@ namespace Vita_Vault.Core
             Graphics.ApplyChanges();
             gsm = new GameStateManager();
             base.Initialize();
+            Constants.Content = Content;
         }
 
         protected override void LoadContent()
