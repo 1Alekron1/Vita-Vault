@@ -4,19 +4,19 @@ using Vita_Vault.Core;
 
 namespace Vita_Vault.Models;
 
-public struct ParticleData
+internal struct ParticleData
 {
     private static Texture2D _defaultTexture;
-    public Texture2D texture = _defaultTexture ??= Constants.Content.Load<Texture2D>("particle");
-    public float lifespan = 2f;
-    public Color colorStart = Color.LightYellow;
-    public Color colorEnd = Color.DarkOrange;
-    public float opacityStart = 1f;
-    public float opacityEnd = 0f;
-    public float sizeStart = 40f;
-    public float sizeEnd = 10f;
-    public float speed = 100f;
-    public float angle = 0f;
+    public readonly Texture2D Texture = _defaultTexture ??= Constants.Content.Load<Texture2D>("particle");
+    public float Lifespan = 2f;
+    public Color ColorStart = Color.LightYellow;
+    public Color ColorEnd = Color.DarkOrange;
+    public const float OpacityStart = 1f;
+    public const float OpacityEnd = 0f;
+    public const float SizeStart = 40f;
+    public const float SizeEnd = 10f;
+    public float Speed = 100f;
+    public float Angle = 0f;
 
     public ParticleData()
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Vita_Vault.Core;
@@ -29,17 +28,17 @@ internal class GameScene : Component
     private float _maxLvlOffsetX;
     private float _maxLvlOffsetY;
 
-    internal override void LoadContent(ContentManager Content)
+    internal override void LoadContent(ContentManager content)
     {
         GenerateNoise();
         _map = new Map();
-        _map.LoadContent(Content);
+        _map.LoadContent(content);
         _player = new Player();
-        _player.LoadContent(Content);
+        _player.LoadContent(content);
         _shooting = new Shooting();
-        _shooting.LoadContent(Content);
-        _background = Content.Load<Texture2D>("gamebg");
-        _bigClouds = Content.Load<Texture2D>("clouds");
+        _shooting.LoadContent(content);
+        _background = content.Load<Texture2D>("gamebg");
+        _bigClouds = content.Load<Texture2D>("clouds");
         _leftBorder = (int)(0.2 * Data.ScreenWidth);
         _rightBorder = (int)(0.8 * Data.ScreenWidth);
         _bottomBorder = (int)(0.6 * Data.ScreenHeight);
@@ -62,7 +61,8 @@ internal class GameScene : Component
             noise[i - 5] = PerlinNoiseGenerator.CreateTexture(Constants.GraphicsDevice,
                 PerlinNoiseGenerator.MapGradient(Color.Orange, Color.DarkRed, temp), i - 5);
         }
-        Constants.noiseFrames = noise;
+
+        Constants.NoiseFrames = noise;
     }
 
     internal override void Update(GameTime gameTime)
@@ -112,9 +112,7 @@ internal class GameScene : Component
     private void DrawClouds(SpriteBatch spriteBatch)
     {
         for (int i = 0; i < 4; i++)
-        {
             spriteBatch.Draw(_bigClouds, new Vector2(i * _bigClouds.Width - (int)(_xLvlOffset * 0.3), 380),
                 Color.White);
-        }
     }
 }

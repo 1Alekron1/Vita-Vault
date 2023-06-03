@@ -1,8 +1,8 @@
 ﻿namespace Vita_Vault.Core
 {
-    public static class Program
+    internal static class Program
     {
-        static void Main()
+        internal static void Main()
         {
             using (var game = new Game1())
                 game.Run();

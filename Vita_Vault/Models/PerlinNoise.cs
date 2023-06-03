@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,10 +8,10 @@ namespace Vita_Vault.Models;
 
 internal class PerlinNoise : Component
 {
-    public Texture2D[] noise;
-    private double currentFrame;
-    private Texture2D currentTexture;
-    private Vector2 _position;
+    private Texture2D[] _noise;
+    private double _currentFrame;
+    private Texture2D _currentTexture;
+    private readonly Vector2 _position;
     public Vector2 LvlOffset;
     public bool IsDestroyed { get; private set; }
 
@@ -22,28 +21,28 @@ internal class PerlinNoise : Component
         LvlOffset = lvlOffset;
     }
 
-    internal override void LoadContent(ContentManager Content)
+    internal override void LoadContent(ContentManager content)
     {
-        noise = Constants.noiseFrames.ToArray();
-        currentTexture = noise[0];
+        _noise = Constants.NoiseFrames.ToArray();
+        _currentTexture = _noise[0];
     }
 
     internal override void Update(GameTime gameTime)
     {
         var time = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        currentFrame += 15 * time;
-        if (currentFrame > noise.Length)
+        _currentFrame += 15 * time;
+        if (_currentFrame > _noise.Length)
         {
             IsDestroyed = true;
             return;
         }
 
-        currentTexture = noise[(int)currentFrame];
+        _currentTexture = _noise[(int)_currentFrame];
     }
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(currentTexture,
-            _position - new Vector2(currentTexture.Width / 2, currentTexture.Height / 2) - LvlOffset, Color.White);
+        spriteBatch.Draw(_currentTexture,
+            _position - new Vector2(_currentTexture.Width / 2, _currentTexture.Height / 2) - LvlOffset, Color.White);
     }
 }

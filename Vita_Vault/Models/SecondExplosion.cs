@@ -9,37 +9,11 @@ namespace Vita_Vault.Models;
 
 internal class SecondExplosion : Component
 {
-    private List<Particle> _particles = new();
-    private ParticleEmitterData _data = new();
-    private Vector2 _position;
+    private readonly List<Particle> _particles = new();
+    private readonly ParticleEmitterData _data = new();
+    private readonly Vector2 _position;
     public Vector2 LvlOffset;
-    public void AddParticle(Particle p)
-    {
-        _particles.Add(p);
-    }
 
-    public SecondExplosion(Vector2 position, Vector2 lvlOffset)
-    {
-        _position = position;
-        LvlOffset = lvlOffset;
-    }
-    public static float RandomFloat(float min, float max)
-    {
-        var random = new Random();
-        return (float)(random.NextDouble() * (max - min)) + min;
-    }
-    
-    private void Emit(Vector2 pos)
-    {
-        ParticleData d = _data.particleData;
-        d.lifespan =  RandomFloat(_data.lifespanMin, _data.lifespanMax);
-        d.speed = RandomFloat(_data.speedMin, _data.speedMax);
-        d.angle = RandomFloat(_data.angle - _data.angleVariance, _data.angle + _data.angleVariance);
-
-        Particle p = new(pos, d);
-        AddParticle(p);
-    } 
-    
     internal override void LoadContent(ContentManager Content)
     {
         for (int i = 0; i < 200; i++)
@@ -56,7 +30,7 @@ internal class SecondExplosion : Component
             particle.LvlOffset = LvlOffset;
         }
 
-        _particles.RemoveAll(p => p.isFinished);
+        _particles.RemoveAll(p => p.IsFinished);
     }
 
     internal override void Draw(SpriteBatch spriteBatch)
@@ -66,5 +40,33 @@ internal class SecondExplosion : Component
             particle.Draw(spriteBatch);
         }
     }
-    
+
+    internal SecondExplosion(Vector2 position, Vector2 lvlOffset)
+    {
+        _position = position;
+        LvlOffset = lvlOffset;
+    }
+
+    private static float RandomFloat(float min, float max)
+    {
+        var random = new Random();
+        return (float)(random.NextDouble() * (max - min)) + min;
+    }
+
+    private void Emit(Vector2 pos)
+    {
+        ParticleData d = _data.ParticleData;
+        d.Lifespan = RandomFloat(ParticleEmitterData.LifespanMin, ParticleEmitterData.LifespanMax);
+        d.Speed = RandomFloat(ParticleEmitterData.SpeedMin, ParticleEmitterData.SpeedMax);
+        d.Angle = RandomFloat(ParticleEmitterData.Angle - ParticleEmitterData.AngleVariance,
+            ParticleEmitterData.Angle + ParticleEmitterData.AngleVariance);
+
+        Particle p = new(pos, d);
+        AddParticle(p);
+    }
+
+    private void AddParticle(Particle p)
+    {
+        _particles.Add(p);
+    }
 }

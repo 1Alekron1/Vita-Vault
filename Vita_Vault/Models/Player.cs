@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Vita_Vault.Core;
@@ -8,34 +9,45 @@ namespace Vita_Vault.Models;
 internal class Player : Component
 {
     private const float Speed = 500f;
+
+    public Vector2 Position;
+    public Vector2 LastStablePosition;
+    public Vector2 DirectionY;
+    public bool Left, Right, jump;
+    public Vector2 LvlOffset;
+
     private Texture2D _texture;
     private Texture2D _textureFlipped;
-    public Vector2 Position;
-    public Vector2 DirectionY;
     private int _hitBoxWidth;
     private int _hitBoxHeight;
     private int _xOffset;
     private int _yOffset;
-    public bool left, right, jump;
-    public Rectangle HitBox { get; private set; }
+    private Rectangle HitBox { get; set; }
     private Rectangle _rectangleToDraw;
-    public Vector2 LvlOffset;
-
-    // Jumping / Gravity
-    private float airSpeed;
+    private float _airSpeed;
     private float _gravity;
     private float _jumpSpeed;
-    private float _fallSpeedAfterCollision;
-    public bool inAir = true;
+    private bool _inAir = true;
     private Map _map;
     private Texture2D _currentSprite;
 
-
-    internal override void LoadContent(ContentManager Content)
+    internal override void Draw(SpriteBatch spriteBatch)
     {
-        _texture = Content.Load<Texture2D>("player");
-        _textureFlipped = Content.Load<Texture2D>("playerFliped");
+        spriteBatch.Draw(_currentSprite, _rectangleToDraw, Color.White);
+    }
+
+    internal void SetMap(Map map)
+    {
+        _map = map;
+    }
+
+    internal override void LoadContent(ContentManager content)
+    {
+        _texture = content.Load<Texture2D>("player");
+        _textureFlipped = content.Load<Texture2D>("playerFliped");
         Position = new Vector2(500, 500);
+        var path = Constants.SavePath;
+        if (File.Exists(path) && new FileInfo(path).Length != 0) LoadCoords();
         UpdateHitBox();
         _hitBoxWidth = 55;
         _hitBoxHeight = 63;
@@ -43,9 +55,9 @@ internal class Player : Component
         _yOffset = 16;
         _gravity = 35;
         _jumpSpeed = -15;
-        _fallSpeedAfterCollision = 225;
         _currentSprite = _texture;
     }
+
 
     internal override void Update(GameTime gameTime)
     {
@@ -55,7 +67,8 @@ internal class Player : Component
 
     private void UpdateHitBox()
     {
-        _rectangleToDraw = new Rectangle((int)(Position.X - _xOffset - LvlOffset.X), (int)(Position.Y - _yOffset - LvlOffset.Y), _texture.Width,
+        _rectangleToDraw = new Rectangle((int)(Position.X - _xOffset - LvlOffset.X),
+            (int)(Position.Y - _yOffset - LvlOffset.Y), _texture.Width,
             _texture.Height);
         HitBox = new Rectangle((int)Position.X, (int)Position.Y,
             _hitBoxWidth, _hitBoxHeight);
@@ -66,37 +79,38 @@ internal class Player : Component
         var time = (float)gameTime.ElapsedGameTime.TotalSeconds;
         var shiftX = time * Speed;
         var shiftY = time * _gravity;
-        var shiftYUp = time * _fallSpeedAfterCollision;
         if (jump) Jump();
-        if (!left && !right && !inAir) return;
+        if (!_inAir) LastStablePosition = new Vector2(Position.X, Position.Y);
+        if (!Left && !Right && !_inAir) return;
+
 
         float xSpeed = 0;
-        if (left)
+        if (Left)
         {
             xSpeed -= shiftX;
             _currentSprite = _textureFlipped;
         }
 
-        if (right)
+        if (Right)
         {
             xSpeed += shiftX;
             _currentSprite = _texture;
         }
 
-        if (!inAir && !CollisionHelper.OnFloor(HitBox, _map)) inAir = true;
+        if (!_inAir && !CollisionHelper.OnFloor(HitBox, _map)) _inAir = true;
 
-        if (inAir)
+        if (_inAir)
         {
-            if (CollisionHelper.CanMoveHere(HitBox.X, HitBox.Y + airSpeed, HitBox.Width, HitBox.Height, _map))
+            if (CollisionHelper.CanMoveHere(HitBox.X, HitBox.Y + _airSpeed, HitBox.Width, HitBox.Height, _map))
             {
-                Position.Y += airSpeed;
-                airSpeed += shiftY;
+                Position.Y += _airSpeed;
+                _airSpeed += shiftY;
             }
             else
             {
-                Position.Y = CollisionHelper.GetPosNextToRoofOrFloor(HitBox, airSpeed, _map);
-                if (airSpeed > 0) ResetInAir();
-                else airSpeed = 0;
+                Position.Y = CollisionHelper.GetPosNextToRoofOrFloor(HitBox, _airSpeed, _map);
+                if (_airSpeed >= 0) ResetInAir();
+                else _airSpeed = 0;
             }
         }
 
@@ -105,35 +119,31 @@ internal class Player : Component
 
     private void Jump()
     {
-        if (inAir) return;
-        inAir = true;
-        airSpeed = _jumpSpeed;
+        if (_inAir) return;
+        LastStablePosition = new Vector2(Position.X, Position.Y);
+        _inAir = true;
+        _airSpeed = _jumpSpeed;
     }
 
     private void ResetInAir()
     {
-        inAir = false;
-        airSpeed = 0;
+        _inAir = false;
+        _airSpeed = 0;
     }
 
     private void UpdateXPos(float xSpeed)
     {
         if (CollisionHelper.CanMoveHere(Position.X + xSpeed, Position.Y, HitBox.Width, HitBox.Height, _map))
             Position.X += xSpeed;
-        else
-        {
-            Position.X = CollisionHelper.GetPosNextToWall(HitBox, xSpeed, _map);
-        }
+        else Position.X = CollisionHelper.GetPosNextToWall(HitBox, xSpeed, _map);
     }
 
 
-    internal override void Draw(SpriteBatch spriteBatch)
+    private void LoadCoords()
     {
-        spriteBatch.Draw(_currentSprite, _rectangleToDraw, Color.White);
-    }
-
-    public void SetMap(Map map)
-    {
-        _map = map;
+        var text = File.ReadAllText(Constants.SavePath).Split();
+        if (text[1] == "0") return;
+        Position.X = float.Parse(text[0]);
+        Position.Y = float.Parse(text[1]);
     }
 }

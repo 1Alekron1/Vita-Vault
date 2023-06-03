@@ -1,14 +1,14 @@
 ﻿namespace Vita_Vault.Models;
 
-public struct ParticleEmitterData
+internal struct ParticleEmitterData
 {
-    public ParticleData particleData = new();
-    public float angle = 0f;
-    public float angleVariance = 360f;
-    public float lifespanMin = 0.1f;
-    public float lifespanMax = 2f;
-    public float speedMin = 150f;
-    public float speedMax = 700f;
+    public ParticleData ParticleData = new();
+    public const float Angle = 0f;
+    public const float AngleVariance = 360f;
+    public const float LifespanMin = 0.1f;
+    public const float LifespanMax = 2f;
+    public const float SpeedMin = 150f;
+    public const float SpeedMax = 700f;
 
     public ParticleEmitterData()
     {

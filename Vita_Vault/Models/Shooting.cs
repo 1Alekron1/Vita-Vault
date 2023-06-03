@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,25 +8,35 @@ namespace Vita_Vault.Models;
 
 internal class Shooting : Component
 {
-    private List<Bullet> activeBullets;
-    private List<Explosion> activeExplosions;
-    public bool _isIdle;
-    private ContentManager _content;
+    public bool IsIdle;
     public Vector2 LvlOffset;
+    private List<Bullet> _activeBullets;
+    private List<Explosion> _activeExplosions;
+    private ContentManager _content;
     private Map _map;
-    private Vector2 _currentPostion;
+    private Vector2 _currentPosition;
 
-    internal override void LoadContent(ContentManager Content)
+    public void SetMap(Map map)
     {
-        activeBullets = new();
-        activeExplosions = new();
-        _content = Content;
+        _map = map;
+    }
+
+    public void SetPosition(Vector2 position)
+    {
+        _currentPosition = position;
+    }
+
+    internal override void LoadContent(ContentManager content)
+    {
+        _activeBullets = new List<Bullet>();
+        _activeExplosions = new List<Explosion>();
+        _content = content;
     }
 
     internal override void Update(GameTime gameTime)
     {
         var destroyed = new List<Bullet>();
-        foreach (var bullet in activeBullets)
+        foreach (var bullet in _activeBullets)
         {
             if (bullet.IsDestroyed)
             {
@@ -38,41 +46,32 @@ internal class Shooting : Component
             else
             {
                 bullet.LvlOffset = LvlOffset;
-                bullet.SetPosition(_currentPostion);
+                bullet.SetPosition(_currentPosition);
                 bullet.Update(gameTime);
             }
         }
 
-        foreach (var explosion in activeExplosions)
+        foreach (var explosion in _activeExplosions)
         {
             explosion.LvlOffset = LvlOffset;
             explosion.Update(gameTime);
         }
-        
+
         foreach (var bullet in destroyed)
         {
-            activeBullets.Remove(bullet);
+            _activeBullets.Remove(bullet);
         }
-        
     }
 
-    private void Explode(Bullet bullet)
-    {
-        var explosion = new Explosion();
-        explosion.LvlOffset = LvlOffset;
-        explosion.SetPosition(bullet.Position);
-        explosion.LoadContent(_content);
-        activeExplosions.Add(explosion);
-    }
 
     internal override void Draw(SpriteBatch spriteBatch)
     {
-        foreach (var bullet in activeBullets)
+        foreach (var bullet in _activeBullets)
         {
             bullet.Draw(spriteBatch);
         }
 
-        foreach (var explosion in activeExplosions)
+        foreach (var explosion in _activeExplosions)
         {
             explosion.Draw(spriteBatch);
         }
@@ -80,28 +79,26 @@ internal class Shooting : Component
 
     internal void Shoot(Vector2 position, Vector2 destination)
     {
-        if (_isIdle)
-        {
-            var bullet = new Bullet(position, destination, LvlOffset);
-            bullet.LoadContent(_content);
-            bullet.SetMap(_map);
-            activeBullets.Add(bullet);
-            _isIdle = false;
-        }
+        if (!IsIdle) return;
+        var bullet = new Bullet(position, destination, LvlOffset);
+        bullet.LoadContent(_content);
+        bullet.SetMap(_map);
+        _activeBullets.Add(bullet);
+        IsIdle = false;
     }
 
     internal void Stop()
     {
-        _isIdle = true;
+        IsIdle = true;
     }
 
-    public void SetMap(Map map)
-    {
-        _map = map;
-    }
 
-    public void SetPosition(Vector2 position)
+    private void Explode(Bullet bullet)
     {
-        _currentPostion = position;
+        var explosion = new Explosion();
+        explosion.LvlOffset = LvlOffset;
+        explosion.SetPosition(bullet.Position);
+        explosion.LoadContent(_content);
+        _activeExplosions.Add(explosion);
     }
 }

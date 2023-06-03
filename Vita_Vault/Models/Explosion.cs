@@ -4,19 +4,20 @@ using Microsoft.Xna.Framework.Graphics;
 using Vita_Vault.Core;
 
 namespace Vita_Vault.Models;
+
 internal class Explosion : Component
 {
+    public Vector2 LvlOffset { get; set; }
     private PerlinNoise _noise;
     private SecondExplosion _particles;
     private Vector2 _position;
-    public Vector2 LvlOffset { get; set; }
 
-    internal override void LoadContent(ContentManager Content)
+    internal override void LoadContent(ContentManager content)
     {
         _noise = new PerlinNoise(_position, LvlOffset);
-        _noise.LoadContent(Content);
+        _noise.LoadContent(content);
         _particles = new SecondExplosion(_position, LvlOffset);
-        _particles.LoadContent(Content);
+        _particles.LoadContent(content);
     }
 
     internal override void Update(GameTime gameTime)
@@ -26,6 +27,7 @@ internal class Explosion : Component
             _noise.LvlOffset = LvlOffset;
             _noise.Update(gameTime);
         }
+
         _particles.Update(gameTime);
         _particles.LvlOffset = LvlOffset;
     }
@@ -36,8 +38,8 @@ internal class Explosion : Component
         _particles.Draw(spriteBatch);
     }
 
-    public void SetPosition(Vector2 currentPostion)
+    public void SetPosition(Vector2 currentPosition)
     {
-        _position = currentPostion;
+        _position = currentPosition;
     }
 }
